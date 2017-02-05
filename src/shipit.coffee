@@ -54,4 +54,13 @@ module.exports = (robot) ->
     regex = /\bship\s*it\b/i
 
   robot.hear regex, (msg) ->
-    msg.send msg.random squirrels
+    if robot.adapterName is "telegram"
+      robot.emit 'telegram:invoke', 'sendPhoto', {
+        chat_id: msg.envelope.room
+        photo: msg.random squirrels
+      }, (error, response) ->
+        if error != null
+          robot.logger.error error
+        robot.logger.debug response
+    else
+      msg.send msg.random squirrels
